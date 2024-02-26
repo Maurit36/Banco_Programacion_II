@@ -3,7 +3,10 @@ package co.edu.uniquindio.banco;
 import co.edu.uniquindio.banco.model.Banco;
 import co.edu.uniquindio.banco.model.Cuenta;
 import co.edu.uniquindio.banco.model.Usuario;
+import co.edu.uniquindio.banco.model.Transaccion;
+import co.edu.uniquindio.banco.model.enumeracion.Categoria;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Main {
@@ -26,32 +29,52 @@ public class Main {
                 "9083", banco);
         crearUsuario("Miguel", "Barrio la milagrosa", "1083849302",
                 "miguel@hotmail.com","4039", banco);
+        crearUsuario("Sara", "Barrio la castellana", "1032940394",
+                "sara@hotmail.com","7645", banco);
 
         //Read
-        System.out.println("Información usuarios: ");
+        System.out.println("\n" + "-----> Información Usuarios Creados: " + "\n");
         mostrarInformacionUsuarios(banco);
 
         //Update
         actualizarUsuario("1083849302", "Andres", "Barrio la adiela",
-                "andres@gmail.com","1234", banco);
-        System.out.println("-----> Informacion luego de actualizar: ");
+                "andres@gmail.com", "1234", banco);
+        System.out.println("\n" + "-----> Informacion Actualizada: " + "\n");
         mostrarInformacionUsuarios(banco);
 
         //Delate
         eliminarUsuario("1094029384", banco);
-        System.out.println("-----> Informacion luego de eliminar: ");
+        System.out.println("\n" + "-----> Informacion Eliminada: " + "\n" );
         mostrarInformacionUsuarios(banco);
 
         /*CRUD Cuenta*/
 
         //Create
-        crearCuenta(10000, banco);
-        crearCuenta(50000, banco);
-        crearCuenta(20000, banco);
+        crearCuenta("1032940394",80000, banco);
+        crearCuenta("1083849302",70000, banco);
+        crearCuenta("1097738093",75000, banco);
+
+        System.out.println("\n" + "Informacion Cuentas de Ahorros Creadas: " + "\n");
+        mostrarInformacionCuentas(banco);
 
         //Read
-        System.out.println("Informacion Cuentas: ");
+        System.out.println("\n" + "-----> Información Cuentas de Ahorros Creadas: " + "\n");
         mostrarInformacionCuentas(banco);
+
+        /*Transacción*/
+
+        System.out.println("\n" + "-----> Información de las Transacciones Realizadas:" + "\n");
+        crearTransaccion("524049384", "524049386", 30000, Categoria.ROPA, banco);
+        mostrarInformacionTransacciones(banco);
+
+        System.out.println("\n" + "-----> Informacion de las Cuentas de Ahorros luego de Transacción:" + "\n");
+        mostrarInformacionCuentas(banco);
+
+        System.out.println("\n" + "-----> Consultar Saldo de una Cuenta de Ahorros:" + "\n");
+        consultarSaldo("1083849302", "1234", banco);
+        LocalDateTime fechaConsulta = new LocalDateTime(2023-05-03, 0, 0);
+        Transaccion consultaFecha = banco.consultarTransaccionFecha(fechaConsulta);
+        System.out.println(consultaFecha);
     }
 
     /**
@@ -82,11 +105,12 @@ public class Main {
 
     /**
      * Método para crear cuenta
+     * @param cedula
      * @param saldo
      * @param banco
      */
-    private static void crearCuenta(double saldo, Banco banco) {
-        banco.crearCuenta(saldo);
+    private static void crearCuenta(String cedula, double saldo, Banco banco) {
+        banco.crearCuenta(cedula, saldo);
     }
 
     /**
@@ -111,7 +135,7 @@ public class Main {
         int tamanoLista = listaCuentas.size();
         for (int i=0; i < tamanoLista; i++) {
             Cuenta cuenta = listaCuentas.get(i);
-            System.out.println(cuenta.toString());
+            System.out.println(cuenta.obtenerInformacion());
         }
     }
 
@@ -136,5 +160,38 @@ public class Main {
     private static void actualizarUsuario(String cedula, String nombre, String direccion, String correo,
                                           String contrasena, Banco banco) {
         banco.actualizarUsuario(cedula, nombre, direccion, correo, contrasena);
+    }
+
+    /**
+     * Método para mostrar información de las transferencias realizadas
+     * @param banco
+     */
+    private static void mostrarInformacionTransacciones(Banco banco) {
+        for (Cuenta cuenta: banco.getListaCuentas()){
+            cuenta.mostrarInformacionTransacciones();
+        }
+    }
+
+    /**
+     * Método para crear transacciones - PTE REVISAR FABIÁN
+     * @param remitente
+     * @param destinatario
+     * @param valor
+     * @param categoria
+     * @param banco
+     */
+    private static void crearTransaccion(String remitente, String destinatario,
+                                              double valor, Categoria categoria, Banco banco){
+        banco.crearTransaccion(remitente, destinatario, valor, categoria);
+    }
+
+    /**
+     * Método para consultar el saldo de las cuentas de ahorros creadas
+     * @param cedula
+     * @param contrasena
+     * @param banco
+     */
+    private static void consultarSaldo(String cedula, String contrasena, Banco banco) {
+        banco.consultarSaldo(cedula, contrasena);
     }
 }

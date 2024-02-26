@@ -3,7 +3,7 @@ package co.edu.uniquindio.banco.model;
 import co.edu.uniquindio.banco.model.enumeracion.Categoria;
 import co.edu.uniquindio.banco.model.enumeracion.TipoTrans;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,16 +131,38 @@ public class Banco {
     }
 
     /**
-     * Método para crear cuenta
+     * Método para crear cuenta de ahorros
      * @param saldo
      */
-    public void crearCuenta(double saldo) {
+    public void crearCuenta(String cedula, double saldo) {
         Cuenta cuenta = new Cuenta();
         String cuentaUnico = generarNumeroCuentaUnico();
         cuenta.setNumeroCuenta(cuentaUnico);
         cuenta.setSaldo(saldo);
+
+        Usuario usuario = obtenerUsuario(cedula);
+        if (usuario != null){
+            cuenta.setUsuario(usuario);
+        }
         getListaCuentas().add(cuenta);
     }
+
+    /**
+     * Método para descartar si un usuario se encuentra en la lista del ArrayList creado
+     * @param cedula
+     * @return
+     */
+    private Usuario obtenerUsuario(String cedula) {
+        Usuario usuarioEncontrado = null;
+        for (Usuario usuario : getListaUsuarios()) {
+            if (usuario.getCedula().equals(cedula)) {
+                usuarioEncontrado = usuario;
+                break;
+            }
+        }
+        return usuarioEncontrado;
+    }
+
 
     /**
      * Método para generar número único para cuenta de ahorros
@@ -171,6 +193,22 @@ public class Banco {
     }
 
     /**
+     * Método para obtener los usuarios en el ArrayList creado
+     * @return
+     */
+    public List<Usuario> obtenerUsuarios() {
+        return getListaUsuarios();
+    }
+
+    /**
+     * Método para obtener las cuentas en el ArrayList creado
+     * @return
+     */
+    public List<Cuenta> obtenerCuentas() {
+        return getListaCuentas();
+    }
+
+    /**
      * Método para devolver posición de usuario
      * @param cedula
      * @return
@@ -192,7 +230,7 @@ public class Banco {
      * @param cedula
      */
     public void eliminarUsuario(String cedula) {
-        for(Usuario usuario : listaUsuarios){
+        for(Usuario usuario : listaUsuarios) {
             if (usuario.getCedula().equalsIgnoreCase(cedula)){
                 getListaUsuarios().remove(usuario);
                 break;
@@ -210,7 +248,7 @@ public class Banco {
      */
     public void actualizarUsuario(String cedula, String nombre, String direccion,
                                   String correo, String contrasena) {
-        for (Usuario usuario : listaUsuarios){
+        for (Usuario usuario : listaUsuarios) {
             if (usuario.getCedula().equalsIgnoreCase(cedula)){
                 usuario.setNombre(nombre);
                 usuario.setDireccion(direccion);
@@ -219,22 +257,6 @@ public class Banco {
                 break;
             }
         }
-    }
-
-    /**
-     * Método para obtener los usuarios en el ArrayList creado
-     * @return
-     */
-    public List<Usuario> obtenerUsuarios() {
-        return getListaUsuarios();
-    }
-
-    /**
-     * Método para obtener las cuentas en el ArrayList creado
-     * @return
-     */
-    public List<Cuenta> obtenerCuentas() {
-        return getListaCuentas();
     }
 
     /**
@@ -254,7 +276,7 @@ public class Banco {
     }
 
     /**
-     * Método para revisar si el saldo de la cuenta es necesario para realizar la transacción
+     * Método para revisar si el saldo de la cuenta es necesario para realizar la transacción - PTE REVISAR FABIÁN
      * @param idNumeroCuenta
      * @param monto
      * @return
@@ -270,7 +292,7 @@ public class Banco {
     }
 
     /**
-     * Método para retornar una cuenta de ahorros existente
+     * Método para retornar una cuenta de ahorros existente - PTE REVISAR FABIÁN
      * @param idNumeroCuenta
      * @return
      */
@@ -283,6 +305,29 @@ public class Banco {
             }
         }
         return cuentaExistente;
+    }
+
+    /**
+     * Método para consultar saldo de la cuenta de ahorros por medio de cédula y contraseña
+     * @param cedula
+     * @param contrasena
+     */
+    public void consultarSaldo(String cedula, String contrasena) {
+        String saldoEncontrado = "Usuario no encontrado";
+
+        for (Cuenta cuenta : listaCuentas){
+            if (cuenta.getUsuario().getCedula().equalsIgnoreCase(cedula) &&
+                    cuenta.getUsuario().getContrasena().equalsIgnoreCase(contrasena)) {
+                saldoEncontrado = String.valueOf(cuenta.getSaldo());
+
+                if (cuenta.getListaTransacciones().isEmpty()){
+                    System.out.println("El usuario no tiene registradas transacciones");
+                }else {
+                    saldoEncontrado += "\n" + "Transacciones asociadas: "+ "\n" + cuenta.getListaTransacciones();
+                }
+            }
+        }
+        System.out.println("El saldo disponible en la cuenta de ahorros es de: "+ saldoEncontrado + "\n");
     }
 
     /**
@@ -301,21 +346,21 @@ public class Banco {
     }
 
     /**
-     * Método para crear transacciones
-     * @param idCuentaOrigen
-     * @param idCuentaDestino
+     * Método para crear transacciones - PTE REVISAR FABIÁN
+     * @param remitente
+     * @param destinatario
      * @param valor
      * @param categoria
      * @return
      */
-    public boolean crearTransaccion(String idCuentaOrigen, String idCuentaDestino, double valor,
+    public boolean crearTransaccion(String remitente, String destinatario, double valor,
                                     Categoria categoria){
         boolean transaccionExitosa = false;
-        Cuenta cuentaOrigen = obtenerCuenta(idCuentaOrigen);
-        Cuenta cuentaDestino = obtenerCuenta(idCuentaDestino);
+        Cuenta cuentaOrigen = obtenerCuenta(remitente);
+        Cuenta cuentaDestino = obtenerCuenta(destinatario);
 
-        if (buscarCuenta(idCuentaDestino) && buscarCuenta(idCuentaOrigen) &&
-                revisarSaldoNecesario(idCuentaOrigen, valor)) {
+        if (buscarCuenta(destinatario) && buscarCuenta(remitente) &&
+                revisarSaldoNecesario(remitente, valor)) {
             Transaccion transaccionCuentaOrigen = new Transaccion(cuentaOrigen, cuentaDestino, valor,
                     categoria, TipoTrans.SALIDA);
             cuentaOrigen.getListaTransacciones().add(transaccionCuentaOrigen);
@@ -331,16 +376,33 @@ public class Banco {
     }
 
     /**
+     * Método para consultar las transacciones que tuvo una cuenta de ahorros en una fecha determinada
+     * @param fechaConsulta
+     * @return
+     */
+    public Transaccion consultarTransaccionFecha(LocalDateTime fechaConsulta) {
+        Transaccion transaccionEncontrada = null;
+        for (Cuenta cuenta : listaCuentas ){
+            for (Transaccion transaccion : cuenta.getListaTransacciones()){
+                if (transaccion.getFecha() == fechaConsulta){
+                    transaccionEncontrada = transaccion;
+                }
+            }
+        }
+        return transaccionEncontrada;
+    }
+
+    /**
      * Método que detalla las transacciones realizadas 1 mes despues de una fecha ingresada
      * @param idCuentaAhorros
      * @param fechaInicio
      * @return
      */
-    public List<Transaccion> clasificarCuentasMes(String idCuentaAhorros, LocalDate fechaInicio){
+    public List<Transaccion> clasificarCuentasMes(String idCuentaAhorros, LocalDateTime fechaInicio){
         List<Transaccion> transaccionesMes = new ArrayList<Transaccion>();
         Cuenta cuenta = obtenerCuenta(idCuentaAhorros);
         for (Transaccion transaccion : cuenta.getListaTransacciones()) {
-            for (LocalDate fecha = fechaInicio; fecha.isBefore(fechaInicio.plusDays(30)); fecha =
+            for (LocalDateTime fecha = fechaInicio; fecha.isBefore(fechaInicio.plusDays(30)); fecha =
                     fecha.plusDays(1)){
                 if(transaccion.getFecha().equals(fecha));
                 transaccionesMes.add(transaccion);
@@ -356,7 +418,7 @@ public class Banco {
      * @param tipoTrans
      * @return
      */
-    public double sumarMontoTipoTrans(String idCuentaAhorros, LocalDate fechaInicio, TipoTrans tipoTrans){
+    public double sumarMontoTipoTrans(String idCuentaAhorros, LocalDateTime fechaInicio, TipoTrans tipoTrans){
         float montosTipoMes = 0;
         List<Transaccion> transaccionesMes = clasificarCuentasMes(idCuentaAhorros, fechaInicio);
         for (Transaccion transaccion : transaccionesMes) {
@@ -383,7 +445,7 @@ public class Banco {
      * @param categoria
      * @return
      */
-    public double sumarMontoCategoriaTransaccion(String idCuentaAhorros, LocalDate fechaInicio,
+    public double sumarMontoCategoriaTransaccion(String idCuentaAhorros, LocalDateTime fechaInicio,
                                                  Categoria categoria){
         double montosCategoriaMes = 0;
         List<Transaccion> transaccionesMes = clasificarCuentasMes(idCuentaAhorros, fechaInicio);
@@ -401,7 +463,7 @@ public class Banco {
      * @param idCuentaAhorros
      * @param fechaInicio
      */
-    public void obtenerGastosIngresosMes(String idCuentaAhorros, LocalDate fechaInicio){
+    public void obtenerGastosIngresosMes(String idCuentaAhorros, LocalDateTime fechaInicio){
         double ingresosMes = sumarMontoTipoTrans(idCuentaAhorros, fechaInicio,
                 TipoTrans.ENTRADA);
         double gastosMes = sumarMontoTipoTrans(idCuentaAhorros, fechaInicio, TipoTrans.SALIDA);
