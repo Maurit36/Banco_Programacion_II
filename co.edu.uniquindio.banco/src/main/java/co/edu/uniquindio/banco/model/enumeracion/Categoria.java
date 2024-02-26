@@ -1,4 +1,8 @@
-package co.edu.uniquindio.banco.model.enumeracion;
+package co.edu.uniquindio.seguimientoBanco.model.enumeracion;
 
-public class Categoria {
+/**
+ * Enum del tipo de categoría para realizar transacciones
+ */
+public enum Categoria {
+    FACTURA, GASOLINA, ROPA, VIAJE
 }
