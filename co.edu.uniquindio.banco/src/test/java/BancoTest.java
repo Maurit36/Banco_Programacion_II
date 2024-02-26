@@ -1,9 +1,11 @@
-package co.edu.uniquindio.seguimientoBanco;
+package co.edu.uniquindio.banco;
 
-import co.edu.uniquindio.seguimientoBanco.model.Banco;
-import co.edu.uniquindio.seguimientoBanco.model.Cuenta;
-import co.edu.uniquindio.seguimientoBanco.model.Transaccion;
-import co.edu.uniquindio.seguimientoBanco.model.Usuario;
+import co.edu.uniquindio.banco.model.Banco;
+import co.edu.uniquindio.banco.model.Cuenta;
+import co.edu.uniquindio.banco.model.Transaccion;
+import co.edu.uniquindio.banco.model.Usuario;
+import co.edu.uniquindio.banco.model.enumeracion.Categoria;
+import co.edu.uniquindio.banco.model.enumeracion.TipoTrans;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

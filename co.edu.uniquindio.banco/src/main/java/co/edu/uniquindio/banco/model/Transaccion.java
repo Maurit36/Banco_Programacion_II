@@ -1,7 +1,7 @@
-package co.edu.uniquindio.seguimientoBanco.model;
+package co.edu.uniquindio.banco.model;
 
-import co.edu.uniquindio.seguimientoBanco.model.enumeracion.Categoria;
-import co.edu.uniquindio.seguimientoBanco.model.enumeracion.TipoTransaccion;
+import co.edu.uniquindio.banco.model.enumeracion.Categoria;
+import co.edu.uniquindio.banco.model.enumeracion.TipoTrans;
 
 import java.time.LocalDateTime;
 
@@ -18,7 +18,7 @@ public class Transaccion {
     private LocalDateTime fecha;
     private Categoria categoria;
     private short costo;
-    private TipoTransaccion tipoTransaccion;
+    private TipoTrans tipoTrans;
 
     /**
      * Variable para relacionar padre
@@ -29,7 +29,7 @@ public class Transaccion {
      * Constructor vacío
      */
     public Transaccion(Cuenta cuentaOrigen, Cuenta cuentaDestino, double valor, Categoria categoria,
-                       TipoTransaccion tipoTransaccion) {
+                       TipoTrans tipoTrans) {
     }
 
     /**
@@ -42,10 +42,11 @@ public class Transaccion {
      * @param fecha
      * @param categoria
      * @param costo
-     * @param tipoTransaccion
+     * @param tipoTrans
      */
-    public Transaccion(String remitente, Cuenta cuentaOrigen, String destinatario, Cuenta cuentaDestino, double valor,
-                       LocalDateTime fecha, Categoria categoria, short costo, TipoTransaccion tipoTransaccion) {
+    public Transaccion(String remitente, Cuenta cuentaOrigen, String destinatario, Cuenta cuentaDestino,
+                       double valor, LocalDateTime fecha, Categoria categoria, short costo,
+                       TipoTrans tipoTrans) {
         this.remitente = remitente;
         this.cuentaOrigen = cuentaOrigen;
         this.destinatario = destinatario;
@@ -54,7 +55,7 @@ public class Transaccion {
         this.fecha = fecha;
         this.categoria = categoria;
         this.costo = costo;
-        this.tipoTransaccion = tipoTransaccion;
+        this.tipoTrans = tipoTrans;
     }
 
     /**
@@ -125,12 +126,12 @@ public class Transaccion {
         this.costo = costo;
     }
 
-    public TipoTransaccion getTipoTransaccion() {
-        return tipoTransaccion;
+    public TipoTrans getTipoTrans() {
+        return tipoTrans;
     }
 
-    public void setTipoTransaccion(TipoTransaccion tipoTransaccion) {
-        this.tipoTransaccion = tipoTransaccion;
+    public void setTipoTrans(TipoTrans tipoTrans) {
+        this.tipoTrans = tipoTrans;
     }
 
     /**
@@ -159,7 +160,7 @@ public class Transaccion {
                 ", fecha=" + fecha +
                 ", categoria=" + categoria +
                 ", costo=" + costo +
-                ", tipoTransaccion=" + tipoTransaccion +
+                ", tipoTrans=" + tipoTrans +
                 '}';
     }
 }

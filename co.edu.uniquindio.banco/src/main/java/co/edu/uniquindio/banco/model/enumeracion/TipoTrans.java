@@ -1,8 +1,8 @@
-package co.edu.uniquindio.seguimientoBanco.model.enumeracion;
+package co.edu.uniquindio.banco.model.enumeracion;
 
 /**
  * Enum del tipo de transacción realizada
  */
-public enum TipoTransaccion {
+public enum TipoTrans {
     ENTRADA, SALIDA
 }

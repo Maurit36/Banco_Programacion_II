@@ -1,4 +1,4 @@
-package co.edu.uniquindio.seguimientoBanco.model;
+package co.edu.uniquindio.banco.model;
 
 public class Usuario {
 

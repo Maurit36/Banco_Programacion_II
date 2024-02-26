@@ -1,7 +1,7 @@
-package co.edu.uniquindio.seguimientoBanco.model;
+package co.edu.uniquindio.banco.model;
 
-import co.edu.uniquindio.seguimientoBanco.model.enumeracion.Categoria;
-import co.edu.uniquindio.seguimientoBanco.model.enumeracion.TipoTransaccion;
+import co.edu.uniquindio.banco.model.enumeracion.Categoria;
+import co.edu.uniquindio.banco.model.enumeracion.TipoTrans;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -114,8 +114,7 @@ public class Banco {
      * @param correo
      * @param contrasena
      */
-    public void crearUsuario(String nombre, String direccion, String cedula,
-                             String correo, String contrasena) {
+    public void crearUsuario(String nombre, String direccion, String cedula, String correo, String contrasena) {
         int resultadoBusqueda = devolverPosicionUsuario(cedula);
         if (resultadoBusqueda == -1) {
             Usuario usuario = new Usuario();
@@ -318,11 +317,11 @@ public class Banco {
         if (buscarCuenta(idCuentaDestino) && buscarCuenta(idCuentaOrigen) &&
                 revisarSaldoNecesario(idCuentaOrigen, valor)) {
             Transaccion transaccionCuentaOrigen = new Transaccion(cuentaOrigen, cuentaDestino, valor,
-                    categoria, TipoTransaccion.SALIDA);
+                    categoria, TipoTrans.SALIDA);
             cuentaOrigen.getListaTransacciones().add(transaccionCuentaOrigen);
             cuentaOrigen.setSaldo(cuentaOrigen.getSaldo()-valor-200);
             Transaccion transaccionCuentaLlegada = new Transaccion(cuentaOrigen, cuentaDestino, valor,
-                    categoria, TipoTransaccion.ENTRADA);
+                    categoria, TipoTrans.ENTRADA);
             cuentaDestino.getListaTransacciones().add(transaccionCuentaLlegada);
             cuentaDestino.setSaldo(cuentaDestino.getSaldo()+valor);
 
@@ -354,15 +353,14 @@ public class Banco {
      * Método para sumar las transacciones de 1 mes por el tipo de transacción realizada
      * @param idCuentaAhorros
      * @param fechaInicio
-     * @param tipoTransaccion
+     * @param tipoTrans
      * @return
      */
-    public double sumarMontoTipoTransaccion(String idCuentaAhorros, LocalDate fechaInicio,
-                                            TipoTransaccion tipoTransaccion){
+    public double sumarMontoTipoTrans(String idCuentaAhorros, LocalDate fechaInicio, TipoTrans tipoTrans){
         float montosTipoMes = 0;
         List<Transaccion> transaccionesMes = clasificarCuentasMes(idCuentaAhorros, fechaInicio);
         for (Transaccion transaccion : transaccionesMes) {
-            if(transaccion.getTipoTransaccion().equals(tipoTransaccion)){
+            if(transaccion.getTipoTrans().equals(tipoTrans)){
                 montosTipoMes += transaccion.getValor();
             }
         } return montosTipoMes;
@@ -390,7 +388,7 @@ public class Banco {
         double montosCategoriaMes = 0;
         List<Transaccion> transaccionesMes = clasificarCuentasMes(idCuentaAhorros, fechaInicio);
         for (Transaccion transaccion : transaccionesMes) {
-            if(transaccion.getTipoTransaccion().equals(TipoTransaccion.SALIDA)){
+            if(transaccion.getTipoTrans().equals(TipoTrans.SALIDA)){
                 if (transaccion.getCategoria().equals(categoria)) {
                     montosCategoriaMes += transaccion.getValor();
                 }
@@ -404,9 +402,9 @@ public class Banco {
      * @param fechaInicio
      */
     public void obtenerGastosIngresosMes(String idCuentaAhorros, LocalDate fechaInicio){
-        double ingresosMes = sumarMontoTipoTransaccion(idCuentaAhorros, fechaInicio,
-                TipoTransaccion.ENTRADA);
-        double gastosMes = sumarMontoTipoTransaccion(idCuentaAhorros, fechaInicio, TipoTransaccion.SALIDA);
+        double ingresosMes = sumarMontoTipoTrans(idCuentaAhorros, fechaInicio,
+                TipoTrans.ENTRADA);
+        double gastosMes = sumarMontoTipoTrans(idCuentaAhorros, fechaInicio, TipoTrans.SALIDA);
         double porcentajesGastosMes = calcularPorcentaje(gastosMes, ingresosMes);
         double porcentajeIngresosMes = calcularPorcentaje(ingresosMes, gastosMes);
         double gastosFacturas = sumarMontoCategoriaTransaccion(idCuentaAhorros, fechaInicio,
