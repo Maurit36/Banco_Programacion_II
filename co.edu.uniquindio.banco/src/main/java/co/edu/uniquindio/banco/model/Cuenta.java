@@ -1,6 +1,6 @@
 package co.edu.uniquindio.banco.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -133,9 +133,9 @@ public class Cuenta {
 
         Usuario usuario = getUsuario();
         if (usuario != null){
-            informacion += "Usuario asociado: " + usuario.toString() + "\n";
+            informacion += "Usuario Asociado: " + usuario.toString() + "\n";
         }else {
-            informacion += "Usuario asociado: No disponible" + "\n";
+            informacion += "Usuario Asociado: No disponible" + "\n";
         }
         return informacion;
     }
@@ -153,7 +153,7 @@ public class Cuenta {
      *Método para consultar el listado de transacciones realizadas al corte de la fecha de consulta
      * @param fechaConsulta
      */
-    public void consultarTransaccionFecha(LocalDateTime fechaConsulta) {
+    public void consultarTransaccionFecha(LocalDate fechaConsulta) {
         for (Transaccion transaccion : listaTransacciones){
             if (transaccion.getFecha() == fechaConsulta){
                 System.out.println("Las transacciones realizadas al corte de la fecha: "

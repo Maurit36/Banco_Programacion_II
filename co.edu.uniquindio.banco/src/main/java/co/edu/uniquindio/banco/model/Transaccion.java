@@ -3,7 +3,7 @@ package co.edu.uniquindio.banco.model;
 import co.edu.uniquindio.banco.model.enumeracion.Categoria;
 import co.edu.uniquindio.banco.model.enumeracion.TipoTrans;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Transaccion {
 
@@ -15,7 +15,7 @@ public class Transaccion {
     private String destinatario;
     private Cuenta cuentaDestino;
     private double valor;
-    private LocalDateTime fecha;
+    private LocalDate fecha;
     private Categoria categoria;
     private short costo;
     private TipoTrans tipoTrans;
@@ -45,7 +45,7 @@ public class Transaccion {
      * @param tipoTrans
      */
     public Transaccion(String remitente, Cuenta cuentaOrigen, String destinatario, Cuenta cuentaDestino,
-                       double valor, LocalDateTime fecha, Categoria categoria, short costo,
+                       double valor, LocalDate fecha, Categoria categoria, short costo,
                        TipoTrans tipoTrans) {
         this.remitente = remitente;
         this.cuentaOrigen = cuentaOrigen;
@@ -102,11 +102,11 @@ public class Transaccion {
         this.valor = valor;
     }
 
-    public LocalDateTime getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDateTime fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 

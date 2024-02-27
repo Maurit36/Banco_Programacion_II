@@ -6,7 +6,7 @@ import co.edu.uniquindio.banco.model.Usuario;
 import co.edu.uniquindio.banco.model.Transaccion;
 import co.edu.uniquindio.banco.model.enumeracion.Categoria;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 public class Main {
@@ -72,9 +72,11 @@ public class Main {
 
         System.out.println("\n" + "-----> Consultar Saldo de una Cuenta de Ahorros:" + "\n");
         consultarSaldo("1083849302", "1234", banco);
-        LocalDateTime fechaConsulta = new LocalDateTime(2023-05-03, 0, 0);
-        Transaccion consultaFecha = banco.consultarTransaccionFecha(fechaConsulta);
-        System.out.println(consultaFecha);
+        LocalDate fechaConsulta = LocalDate.of(2024, 2, 26);
+        System.out.println("-----> Consulta de Transacción de acuerdo a la Fecha Indicada: " + fechaConsulta);
+        Transaccion consultaFechaTransaccion = banco.consultarTransaccionFecha(fechaConsulta);
+        System.out.println(consultaFechaTransaccion);
+
     }
 
     /**

@@ -3,7 +3,7 @@ package co.edu.uniquindio.banco.model;
 import co.edu.uniquindio.banco.model.enumeracion.Categoria;
 import co.edu.uniquindio.banco.model.enumeracion.TipoTrans;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,7 +134,7 @@ public class Banco {
      * Método para crear cuenta de ahorros
      * @param saldo
      */
-    public void crearCuenta(String cedula, double saldo) {
+    public Cuenta crearCuenta(String cedula, double saldo) {
         Cuenta cuenta = new Cuenta();
         String cuentaUnico = generarNumeroCuentaUnico();
         cuenta.setNumeroCuenta(cuentaUnico);
@@ -145,6 +145,7 @@ public class Banco {
             cuenta.setUsuario(usuario);
         }
         getListaCuentas().add(cuenta);
+        return cuenta;
     }
 
     /**
@@ -312,22 +313,25 @@ public class Banco {
      * @param cedula
      * @param contrasena
      */
-    public void consultarSaldo(String cedula, String contrasena) {
-        String saldoEncontrado = "Usuario no encontrado";
+    public double consultarSaldo(String cedula, String contrasena) {
+
+        double saldoEncontrado = 0.0;
 
         for (Cuenta cuenta : listaCuentas){
-            if (cuenta.getUsuario().getCedula().equalsIgnoreCase(cedula) &&
+            if (cuenta.getUsuario() != null && cuenta.getUsuario().getCedula().equalsIgnoreCase(cedula) &&
                     cuenta.getUsuario().getContrasena().equalsIgnoreCase(contrasena)) {
-                saldoEncontrado = String.valueOf(cuenta.getSaldo());
+
+                saldoEncontrado = cuenta.getSaldo();
 
                 if (cuenta.getListaTransacciones().isEmpty()){
                     System.out.println("El usuario no tiene registradas transacciones");
                 }else {
-                    saldoEncontrado += "\n" + "Transacciones asociadas: "+ "\n" + cuenta.getListaTransacciones();
+                    obtenerTransaccion(cuenta);
                 }
             }
         }
-        System.out.println("El saldo disponible en la cuenta de ahorros es de: "+ saldoEncontrado + "\n");
+        System.out.println("\n" + "El saldo disponible en la cuenta es de: "+ saldoEncontrado +"\n");
+        return saldoEncontrado;
     }
 
     /**
@@ -380,7 +384,7 @@ public class Banco {
      * @param fechaConsulta
      * @return
      */
-    public Transaccion consultarTransaccionFecha(LocalDateTime fechaConsulta) {
+    public Transaccion consultarTransaccionFecha(LocalDate fechaConsulta) {
         Transaccion transaccionEncontrada = null;
         for (Cuenta cuenta : listaCuentas ){
             for (Transaccion transaccion : cuenta.getListaTransacciones()){
@@ -398,11 +402,11 @@ public class Banco {
      * @param fechaInicio
      * @return
      */
-    public List<Transaccion> clasificarCuentasMes(String idCuentaAhorros, LocalDateTime fechaInicio){
+    public List<Transaccion> clasificarCuentasMes(String idCuentaAhorros, LocalDate fechaInicio){
         List<Transaccion> transaccionesMes = new ArrayList<Transaccion>();
         Cuenta cuenta = obtenerCuenta(idCuentaAhorros);
         for (Transaccion transaccion : cuenta.getListaTransacciones()) {
-            for (LocalDateTime fecha = fechaInicio; fecha.isBefore(fechaInicio.plusDays(30)); fecha =
+            for (LocalDate fecha = fechaInicio; fecha.isBefore(fechaInicio.plusDays(30)); fecha =
                     fecha.plusDays(1)){
                 if(transaccion.getFecha().equals(fecha));
                 transaccionesMes.add(transaccion);
@@ -418,7 +422,7 @@ public class Banco {
      * @param tipoTrans
      * @return
      */
-    public double sumarMontoTipoTrans(String idCuentaAhorros, LocalDateTime fechaInicio, TipoTrans tipoTrans){
+    public double sumarMontoTipoTrans(String idCuentaAhorros, LocalDate fechaInicio, TipoTrans tipoTrans){
         float montosTipoMes = 0;
         List<Transaccion> transaccionesMes = clasificarCuentasMes(idCuentaAhorros, fechaInicio);
         for (Transaccion transaccion : transaccionesMes) {
@@ -445,7 +449,7 @@ public class Banco {
      * @param categoria
      * @return
      */
-    public double sumarMontoCategoriaTransaccion(String idCuentaAhorros, LocalDateTime fechaInicio,
+    public double sumarMontoCategoriaTransaccion(String idCuentaAhorros, LocalDate fechaInicio,
                                                  Categoria categoria){
         double montosCategoriaMes = 0;
         List<Transaccion> transaccionesMes = clasificarCuentasMes(idCuentaAhorros, fechaInicio);
@@ -463,7 +467,7 @@ public class Banco {
      * @param idCuentaAhorros
      * @param fechaInicio
      */
-    public void obtenerGastosIngresosMes(String idCuentaAhorros, LocalDateTime fechaInicio){
+    public void obtenerGastosIngresosMes(String idCuentaAhorros, LocalDate fechaInicio){
         double ingresosMes = sumarMontoTipoTrans(idCuentaAhorros, fechaInicio,
                 TipoTrans.ENTRADA);
         double gastosMes = sumarMontoTipoTrans(idCuentaAhorros, fechaInicio, TipoTrans.SALIDA);
@@ -477,5 +481,29 @@ public class Banco {
                 Categoria.ROPA);
         double gastosViajes = sumarMontoCategoriaTransaccion(idCuentaAhorros, fechaInicio,
                 Categoria.VIAJE);
+    }
+
+    /**
+     * Método para buscar un usuario por número de cédula
+     * @param cedula
+     * @return
+     */
+    public Usuario buscarUsuarioPorCedula(String cedula) {
+        Usuario usuarioEncontrado = null;
+        for (Usuario usuario : listaUsuarios){
+            if (usuario.getCedula().equalsIgnoreCase(cedula)){
+                usuarioEncontrado = usuario;
+            }
+        }
+        return usuarioEncontrado;
+    }
+
+    /**
+     * Método para obtener transacción
+     * @param cuenta
+     */
+    private void obtenerTransaccion(Cuenta cuenta) {
+        System.out.println("Lista de transacciones asociadas:");
+        System.out.println(cuenta.getListaTransacciones());
     }
 }
